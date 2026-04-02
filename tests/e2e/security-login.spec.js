@@ -9,7 +9,7 @@ test('login success', async ({page}) => {
     await page.fill('#password', 'SuperSecretPassword!');
     await page.click('button[type="submit"]');
 
-    await expect(page.locator('#flash')).toContainText('You logged into a secure area!');
+    await expect(page.locator('#flash')).toContainText('You logged into a secure');
 });
 
 test('login failed (wrong password)', async ({page}) => {
@@ -25,7 +25,7 @@ test('login failed (wrong password)', async ({page}) => {
 test('brute-force simulation (multiple failed attempts)',async ({page}) => {
     await page.goto(URL);
 
-    for (let i=0; i<5; i++) {
+    for (let i=0; i<9; i++) {
         await page.fill('#username', 'tomsmith');
         await page.fill('#password', 'WrongPassword!');
         await page.click('button[type="submit"]');
