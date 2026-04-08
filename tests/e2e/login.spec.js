@@ -31,7 +31,7 @@ for (const user of users) {
     if (user.expected === 'success') {
         await expect(page.locator('#flash')).toContainText('You logged into a secure area!');
     } else {
-        await expect(page.locator('#flash')).toContainText('invalid');
+        await expect(page.locator('#flash')).toContainText('Your username is invalid!');
     }
   });
 }
