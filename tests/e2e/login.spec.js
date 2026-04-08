@@ -1,37 +1,38 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
 
 const URL = 'https://the-internet.herokuapp.com/login';
 
-/*
-test('login success', async ({page}) => {
-    await page.goto('https://the-internet.herokuapp.com/login');
-
-    await page.fill('#username', 'tomsmith');
-    await page.fill('#password', 'SuperSecretPassword!');
-    await page.click('button[type="submit"]');
-
-    await expect(page.locator('#flash')).toContainText('You logged into a secure area!');
-});
-*/
-
 const users = [
-  { username: 'tomsmith', password: 'SuperSecretPassword!', expected: 'success' },
-  { username: 'tomsmith', password: 'WrongPassword!', expected: 'fail' },
-  { username: '', password: '123', expected: 'fail' }
+  {
+    username: 'tomsmith',
+    password: 'SuperSecretPassword!',
+    expectedMessage: 'You logged into a secure area!'
+  },
+  {
+    username: 'tomsmith',
+    password: 'WrongPassword',
+    expectedMessage: 'Your password is invalid!'
+  },
+  {
+    username: '',
+    password: '123',
+    expectedMessage: 'Your username is invalid!'
+  }
 ];
 
-for (const user of users) {
-  test(`login test - ${user.username || 'empty'} - ${user.expected}`, async ({ page }) => {
-    await page.goto(URL);
+test.describe('Login Tests', () => {
+  let loginPage;
 
-    await page.fill('#username', user.username);
-    await page.fill('#password', user.password);
-    await page.click('button[type="submit"]');
-
-    if (user.expected === 'success') {
-        await expect(page.locator('#flash')).toContainText('You logged into a secure area!');
-    } else {
-        await expect(page.locator('#flash')).toContainText('Your username is invalid!');
-    }
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    await loginPage.goto(URL);
   });
-}
+
+  for (const user of users) {
+    test(`Login with ${user.username || 'empty'} should show "${user.expectedMessage}"`, async () => {
+      await loginPage.login(user.username, user.password);
+      await expect(loginPage.getFlashMessage()).toContainText(user.expectedMessage);
+    });
+  }
+});
