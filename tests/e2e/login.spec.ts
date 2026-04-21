@@ -3,7 +3,13 @@ import { LoginPage } from '../pages/login.page';
 
 const URL = 'https://the-internet.herokuapp.com/login';
 
-const users = [
+type User = {
+  username: string;
+  password: string;
+  expectedMessage: string;
+};
+
+const users: User[] = [
   {
     username: 'tomsmith',
     password: 'SuperSecretPassword!',
@@ -22,7 +28,7 @@ const users = [
 ];
 
 test.describe('Login Tests', () => {
-  let loginPage;
+  let loginPage: LoginPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
