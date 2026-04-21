@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/login.page.js';
+import { LoginPage } from '../pages/login.page';
 
 const URL = 'https://the-internet.herokuapp.com/login';
 const SECURE_URL = 'https://the-internet.herokuapp.com/secure';
 
 test.describe('Security Flow Tests', () => {
-  let loginPage;
+  let loginPage: LoginPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
@@ -96,18 +96,11 @@ test.describe('Security Flow Tests', () => {
     await page.goto(URL.replace('http:', 'https:'));
     await expect(page).toHaveURL(/^https:\/\//);
 
-    // Check for basic security headers (this would require network interception)
-    // Note: Playwright can intercept requests to check headers
-    await page.route('**/*', route => {
-      const request = route.request();
-      if (request.url().includes('the-internet.herokuapp.com')) {
-        // In a real scenario, you'd check response headers here
-        // For now, just continue
-      }
-      route.continue();
-    });
-
+    // Verify we can access the login page securely
     await loginPage.goto(URL);
-    // The test passes if we can load the page securely
+    await expect(page).toHaveURL(URL);
+
+    // Basic check that the page loaded (implying HTTPS is working)
+    await expect(page.locator('h2')).toContainText('Login Page');
   });
 });
