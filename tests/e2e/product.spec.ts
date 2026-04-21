@@ -3,11 +3,11 @@ import { SauceDemoLoginPage } from '../pages/saucedemo-login.page';
 import { InventoryPage } from '../pages/inventory.page';
 import { users, products as productData } from '../fixtures/testData';
 
-const productNames = productData.map(p => p.name);
+const productNames: string[] = productData.map(p => p.name);
 
 test.describe('Product Tests', () => {
-  let loginPage;
-  let inventoryPage;
+  let loginPage: SauceDemoLoginPage;
+  let inventoryPage: InventoryPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new SauceDemoLoginPage(page);

@@ -1,11 +1,12 @@
 // Helper functions for Playwright tests
+import type { Page } from '@playwright/test';
 
 /**
  * Generates a random string of specified length
  * @param {number} length - Length of the random string
  * @returns {string} Random string
  */
-export function generateRandomString(length = 8) {
+export function generateRandomString(length: number = 8): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
@@ -18,7 +19,7 @@ export function generateRandomString(length = 8) {
  * Generates random user information for testing
  * @returns {object} Object with firstName, lastName, postalCode
  */
-export function generateRandomUserInfo() {
+export function generateRandomUserInfo(): { firstName: string; lastName: string; postalCode: string } {
   return {
     firstName: generateRandomString(5),
     lastName: generateRandomString(7),
@@ -32,7 +33,7 @@ export function generateRandomUserInfo() {
  * @param {string} selector - CSS selector
  * @param {number} timeout - Timeout in milliseconds (default 5000)
  */
-export async function waitForElementVisible(page, selector, timeout = 5000) {
+export async function waitForElementVisible(page: Page, selector: string, timeout: number = 5000): Promise<void> {
   await page.waitForSelector(selector, { state: 'visible', timeout });
 }
 
@@ -42,7 +43,7 @@ export async function waitForElementVisible(page, selector, timeout = 5000) {
  * @param {string} selector - CSS selector
  * @param {string} expectedUrl - Expected URL after click (optional)
  */
-export async function clickAndWait(page, selector, expectedUrl = null) {
+export async function clickAndWait(page: Page, selector: string, expectedUrl: string | null = null): Promise<void> {
   await page.click(selector);
   if (expectedUrl) {
     await page.waitForURL(expectedUrl);
@@ -55,10 +56,10 @@ export async function clickAndWait(page, selector, expectedUrl = null) {
  * @param {string} selector - CSS selector
  * @param {string} value - Value to fill
  */
-export async function fillAndVerify(page, selector, value) {
+export async function fillAndVerify(page: Page, selector: string, value: string): Promise<void> {
   await page.fill(selector, value);
   await page.waitForFunction(
-    (sel, val) => document.querySelector(sel).value === val,
+    (sel, val) => (document.querySelector(sel) as HTMLInputElement).value === val,
     selector,
     value
   );

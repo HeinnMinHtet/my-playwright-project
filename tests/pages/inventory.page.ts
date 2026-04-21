@@ -1,9 +1,9 @@
-export class InventoryPage {
-  constructor(page) {
-    this.page = page;
-  }
+import { Page } from '@playwright/test';
 
-  async isProductAvailable(productName) {
+export class InventoryPage {
+  constructor(private page: Page) {}
+
+  async isProductAvailable(productName: string): Promise<boolean> {
     const productElements = this.page.locator('.inventory_item_name');
     const count = await productElements.count();
     for (let i = 0; i < count; i++) {

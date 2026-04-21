@@ -19,7 +19,13 @@ export const users = {
   }
 };
 
-export const products = [
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+};
+
+export const products: Product[] = [
   {
     id: 'sauce-labs-backpack',
     name: 'Sauce Labs Backpack',

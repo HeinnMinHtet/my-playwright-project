@@ -5,8 +5,8 @@ import { generateRandomUserInfo } from '../utils/helpers';
 import { users, products, checkoutInfo } from '../fixtures/testData';
 
 test.describe('Checkout Tests', () => {
-  let loginPage;
-  let checkoutPage;
+  let loginPage: SauceDemoLoginPage;
+  let checkoutPage: CheckoutPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new SauceDemoLoginPage(page);
@@ -18,7 +18,11 @@ test.describe('Checkout Tests', () => {
 
   test('Complete checkout process', async ({ page }) => {
     // Add a product to cart
-    await checkoutPage.addToCart(products[0].id);
+    const firstProduct = products[0];
+    if (!firstProduct) {
+      throw new Error('No products available for testing');
+    }
+    await checkoutPage.addToCart(firstProduct.id);
 
     // Go to cart
     await checkoutPage.goToCart();
@@ -31,7 +35,7 @@ test.describe('Checkout Tests', () => {
     await checkoutPage.fillCheckoutInfo(userInfo.firstName, userInfo.lastName, userInfo.postalCode);
 
     // Verify checkout overview
-    await checkoutPage.verifyOrder(products[0].name);
+    await checkoutPage.verifyOrder(firstProduct.name);
 
     // Finish checkout
     await checkoutPage.finishCheckout();
