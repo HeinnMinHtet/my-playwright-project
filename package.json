@@ -6,7 +6,13 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:smoke": "TEST_TYPE=smoke npx playwright test",
+    "test:regression": "TEST_TYPE=regression npx playwright test",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

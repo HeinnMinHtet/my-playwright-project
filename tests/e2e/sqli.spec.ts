@@ -2,7 +2,7 @@ import {test, expect} from '@playwright/test';
 
 type SQLInjectionPayload = string;
 
-test('SQL Injection test - login bypass attempt', async ({page}) => {
+test('SQL Injection test - login bypass attempt @regression', async ({page}) => {
     await page.goto('https://the-internet.herokuapp.com/login');
 
     const payload: SQLInjectionPayload = `' OR '1'='1`;

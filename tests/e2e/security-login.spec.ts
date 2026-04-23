@@ -50,3 +50,13 @@ test('brute-force simulation (multiple failed attempts)',async ({page}) => {
     }
     await expect (page.locator('#flash')).toContainText('invalid');
 });
+
+test('smoke test - basic login @smoke', async ({page}) => {
+    await page.goto(URL);
+
+    await page.fill('#username', 'tomsmith');
+    await page.fill('#password', 'SuperSecretPassword!');
+    await page.click('button[type="submit"]');
+
+    await expect(page.locator('#flash')).toContainText('You logged into a secure area!');
+});
