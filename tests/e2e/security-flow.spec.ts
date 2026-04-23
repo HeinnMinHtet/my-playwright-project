@@ -4,6 +4,26 @@ import { LoginPage } from '../pages/login.page';
 const URL = 'https://the-internet.herokuapp.com/login';
 const SECURE_URL = 'https://the-internet.herokuapp.com/secure';
 
+interface SecurityTestData {
+  xssPayload: string;
+  sqliPayload: string;
+  maliciousInputs: string[];
+}
+
+const securityData: SecurityTestData = {
+  xssPayload: '<script>alert("XSS")</script>',
+  sqliPayload: "1' OR '1'='1",
+  maliciousInputs: [
+    '<script>alert("xss")</script>',
+    '"><script>alert("xss")</script>',
+    'javascript:alert("xss")',
+    'data:text/html,<script>alert("xss")</script>',
+    '../../../etc/passwd',
+    ' UNION SELECT * FROM users --',
+    '1; DROP TABLE users --'
+  ]
+};
+
 test.describe('Security Flow Tests', () => {
   let loginPage: LoginPage;
 
@@ -28,20 +48,19 @@ test.describe('Security Flow Tests', () => {
 
     // Step 4: Test for XSS vulnerability in secure area (if there's an input field)
     // Note: The secure area might not have input fields, but testing anyway
-    const xssPayload = '<script>alert("XSS")</script>';
     // If there are any input fields, test them
     const inputs = page.locator('input[type="text"], textarea');
     if (await inputs.count() > 0) {
-      await inputs.first().fill(xssPayload);
+      await inputs.first().fill(securityData.xssPayload);
       // Check that script is not executed (no alert should appear)
       // Since we can't detect alerts directly, we check the input value is sanitized or rejected
-      const value = await inputs.first().inputValue();
+      const value: string = await inputs.first().inputValue();
       expect(value).not.toContain('<script>');
     }
 
     // Step 5: Test for SQL Injection attempts (if login form is accessible)
     // Try to inject SQL via URL parameters or hidden fields if present
-    await page.goto(`${SECURE_URL}?id=1' OR '1'='1`);
+    await page.goto(`${SECURE_URL}?id=${securityData.sqliPayload}`);
     // Should still be in secure area or properly handle the injection
     await expect(page.locator('h2')).toContainText('Secure Area');
 
@@ -69,17 +88,7 @@ test.describe('Security Flow Tests', () => {
     await loginPage.goto(URL);
 
     // Test various malicious inputs
-    const maliciousInputs = [
-      '<script>alert("xss")</script>',
-      '"><script>alert("xss")</script>',
-      'javascript:alert("xss")',
-      'data:text/html,<script>alert("xss")</script>',
-      '../../../etc/passwd',
-      ' UNION SELECT * FROM users --',
-      '1; DROP TABLE users --'
-    ];
-
-    for (const input of maliciousInputs) {
+    for (const input of securityData.maliciousInputs) {
       await page.fill('#username', input);
       await page.fill('#password', 'test');
       await page.click('button[type="submit"]');

@@ -58,8 +58,8 @@ export async function clickAndWait(page: Page, selector: string, expectedUrl: st
  */
 export async function fillAndVerify(page: Page, selector: string, value: string): Promise<void> {
   await page.fill(selector, value);
-  await page.waitForFunction(
-    (sel, val) => (document.querySelector(sel) as HTMLInputElement).value === val,
+  await (page.waitForFunction as any)(
+    (sel: string, val: string) => (document.querySelector(sel) as HTMLInputElement).value === val,
     selector,
     value
   );
